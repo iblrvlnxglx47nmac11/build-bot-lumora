@@ -58,13 +58,13 @@ RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key
 WORKDIR /app
 
 # Copy package files
-COPY lumora-ext/package*.json ./
+COPY package*.json ./
 
 # Install dependencies
 RUN npm ci --only=production
 
 # Copy bot files
-COPY lumora-ext/ ./
+COPY . ./
 
 # Create Chrome profile directory
 RUN mkdir -p /app/chrome-profile
