@@ -1,0 +1,41 @@
+{
+  "manifest_version": 3,
+  "name": "Lumora Auto-Farmer",
+  "version": "1.0.0",
+  "description": "Automation bot untuk game Lumora (playlumora.io) — harvest, sell, gather, craft, quest secara otomatis.",
+  "permissions": [
+    "storage",
+    "alarms",
+    "activeTab"
+  ],
+  "host_permissions": [
+    "https://lumora-server-production-8362.up.railway.app/*",
+    "https://playlumora.io/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://playlumora.io/*"],
+      "js": ["content.js"],
+      "css": ["content.css"],
+      "run_at": "document_idle"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["bot.js"],
+      "matches": ["https://playlumora.io/*"]
+    }
+  ],
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_title": "Lumora Auto-Farmer"
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}

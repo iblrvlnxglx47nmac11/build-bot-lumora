@@ -1,0 +1,19 @@
+{
+  "name": "lumora-headless-bot",
+  "version": "1.0.0",
+  "description": "Lumora Bot - Headless Runner with Puppeteer",
+  "main": "headless-bot.js",
+  "scripts": {
+    "start": "node headless-bot.js",
+    "dev": "nodemon headless-bot.js"
+  },
+  "keywords": ["lumora", "bot", "farming", "automation"],
+  "author": "Hermes Agent",
+  "license": "MIT",
+  "dependencies": {
+    "puppeteer": "^21.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.0"
+  }
+}

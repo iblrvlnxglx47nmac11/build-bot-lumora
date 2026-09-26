@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lumora Bot Dashboard 🌾</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+  color: #e0e0e0;
+  padding: 20px;
+  min-height: 100vh;
+}
+
+.container {
+  max-width: 1800px;
+  margin: 0 auto;
+}
+
+.header {
+  background: linear-gradient(135deg, #2d4a2c 0%, #3d5a3c 100%);
+  padding: 20px 30px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header h1 {
+  font-size: 28px;
+  color: #6aa84f;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.header-stats {
+  display: flex;
+  gap: 30px;
+  font-size: 14px;
+}
+
+.header-stat {
+  text-align: center;
+}
+
+.header-stat-label {
+  color: #999;
+  font-size: 11px;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.header-stat-value {
+  font-size: 20px;
+  font-weight: bold;
+  color: #6aa84f;
+}
+
+.controls {
+  background: #252525;
+  padding: 15px 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-primary {
+  background: #6aa84f;
+  color: white;
+}
+
+.btn-primary:hover {
+  background: #5a9841;
+}
+
+.btn-secondary {
+  background: #3a3a3a;
+  color: #e0e0e0;
+}
+
+.btn-secondary:hover {
+  background: #4a4a4a;
+}
+
+.btn-danger {
+  background: #c04020;
+  color: white;
+}
+
+.btn-danger:hover {
+  background: #a03518;
+}
+
+.input-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.input-group label {
+  font-size: 13px;
+  color: #999;
+}
+
+.input-group input {
+  padding: 6px 10px;
+  border-radius: 4px;
+  border: 1px solid #3a3a3a;
+  background: #1a1a1a;
+  color: #e0e0e0;
+  font-size: 13px;
+  width: 250px;
+}
+
+.summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.summary-card {
+  background: #252525;
+  padding: 20px;
+  border-radius: 8px;
+  border-left: 4px solid #6aa84f;
+}
+
+.summary-card.gold { border-left-color: #e0a83c; }
+.summary-card.gld { border-left-color: #2d7f91; }
+.summary-card.lumi { border-left-color: #9c4dcc; }
+.summary-card.warning { border-left-color: #ff6b6b; }
+
+.summary-label {
+  font-size: 12px;
+  color: #999;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.summary-value {
+  font-size: 28px;
+  font-weight: bold;
+  color: #e0e0e0;
+}
+
+.summary-sub {
+  font-size: 13px;
+  color: #6aa84f;
+  margin-top: 4px;
+}
+
+.accounts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 15px;
+}
+
+.account-card {
+  background: #252525;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  transition: transform 0.2s;
+}
+
+.account-card:hover {
+  transform: translateY(-2px);
+}
+
+.account-header {
+  padding: 15px 20px;
+  background: #2d2d2d;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid #3a3a3a;
+}
+
+.account-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: #e0e0e0;
+}
+
+.account-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+}
+
+.status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #666;
+}
+
+.status-dot.running { background: #6aa84f; animation: pulse 2s infinite; }
+.status-dot.stopped { background: #c04020; }
+.status-dot.warning { background: #e0a83c; }
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.account-body {
+  padding: 20px;
+}
+
+.account-stats {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 15px;
+}
+
+.stat-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+}
+
+.stat-label {
+  color: #999;
+}
+
+.stat-value {
+  font-weight: 600;
+  color: #e0e0e0;
+}
+
+.stat-value.gold { color: #e0a83c; }
+.stat-value.gld { color: #2d7f91; }
+.stat-value.lumi { color: #9c4dcc; }
+.stat-value.positive { color: #6aa84f; }
+.stat-value.negative { color: #c04020; }
+
+.account-metrics {
+  background: #1a1a1a;
+  padding: 12px;
+  border-radius: 6px;
+  margin-top: 12px;
+}
+
+.metrics-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  padding: 4px 0;
+}
+
+.metrics-label {
+  color: #999;
+}
+
+.metrics-value {
+  color: #e0e0e0;
+  font-weight: 600;
+}
+
+.account-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 15px;
+}
+
+.btn-sm {
+  padding: 6px 12px;
+  font-size: 12px;
+  flex: 1;
+}
+
+.log-section {
+  background: #252525;
+  border-radius: 8px;
+  padding: 20px;
+  margin-top: 20px;
+}
+
+.log-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.log-header h2 {
+  font-size: 18px;
+  color: #e0e0e0;
+}
+
+.log-box {
+  background: #1a1a1a;
+  padding: 15px;
+  border-radius: 6px;
+  max-height: 400px;
+  overflow-y: auto;
+  font-family: 'Consolas', 'Monaco', monospace;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.log-line {
+  padding: 4px 0;
+  border-bottom: 1px solid #2a2a2a;
+}
+
+.log-line.success { color: #6aa84f; }
+.log-line.error { color: #c04020; }
+.log-line.warning { color: #e0a83c; }
+.log-line.info { color: #2d7f91; }
+
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: #666;
+}
+
+.empty-state h3 {
+  font-size: 20px;
+  margin-bottom: 10px;
+}
+
+.empty-state p {
+  font-size: 14px;
+}
+
+.footer {
+  text-align: center;
+  margin-top: 40px;
+  padding: 20px;
+  color: #666;
+  font-size: 13px;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <!-- Header -->
+  <div class="header">
+    <h1>🌾 Lumora Bot Dashboard</h1>
+    <div class="header-stats">
+      <div class="header-stat">
+        <div class="header-stat-label">Total Accounts</div>
+        <div class="header-stat-value" id="total-accounts">0</div>
+      </div>
+      <div class="header-stat">
+        <div class="header-stat-label">Running</div>
+        <div class="header-stat-value" id="running-accounts">0</div>
+      </div>
+      <div class="header-stat">
+        <div class="header-stat-label">Total GLD</div>
+        <div class="header-stat-value" id="total-gld">0.000</div>
+      </div>
+      <div class="header-stat">
+        <div class="header-stat-label">Est. USD</div>
+        <div class="header-stat-value" id="total-usd">$0.00</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Controls -->
+  <div class="controls">
+    <button class="btn btn-primary" id="btn-add-account">➕ Add Account</button>
+    <button class="btn btn-secondary" id="btn-refresh-all">↻ Refresh All</button>
+    <button class="btn btn-secondary" id="btn-start-all">▶ Start All</button>
+    <button class="btn btn-danger" id="btn-stop-all">⏹ Stop All</button>
+    
+    <div style="flex: 1"></div>
+    
+    <div class="input-group">
+      <label>GLD Price:</label>
+      <input type="number" id="gld-price" value="500" step="10" min="0">
+    </div>
+    
+    <div class="input-group">
+      <label>Auto-refresh:</label>
+      <select id="refresh-interval" style="padding: 6px 10px; border-radius: 4px; border: 1px solid #3a3a3a; background: #1a1a1a; color: #e0e0e0; font-size: 13px;">
+        <option value="0">Off</option>
+        <option value="10000">10s</option>
+        <option value="30000" selected>30s</option>
+        <option value="60000">1m</option>
+        <option value="300000">5m</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Summary -->
+  <div class="summary">
+    <div class="summary-card">
+      <div class="summary-label">Total Actions</div>
+      <div class="summary-value" id="sum-actions">0</div>
+      <div class="summary-sub" id="sum-actions-h">0/h avg</div>
+    </div>
+    
+    <div class="summary-card gold">
+      <div class="summary-label">Total Gold</div>
+      <div class="summary-value" id="sum-gold">0◈</div>
+      <div class="summary-sub" id="sum-gold-h">0◈/h</div>
+    </div>
+    
+    <div class="summary-card lumi">
+      <div class="summary-label">Total LUMI</div>
+      <div class="summary-value" id="sum-lumi">0</div>
+      <div class="summary-sub" id="sum-lumi-net">Net: 0</div>
+    </div>
+    
+    <div class="summary-card gld">
+      <div class="summary-label">Total GLD Earned</div>
+      <div class="summary-value" id="sum-gld-earned">0.000</div>
+      <div class="summary-sub" id="sum-gld-usd">$0.00 total</div>
+    </div>
+    
+    <div class="summary-card warning">
+      <div class="summary-label">Warnings</div>
+      <div class="summary-value" id="sum-warnings">0</div>
+      <div class="summary-sub">Emergency stops / errors</div>
+    </div>
+  </div>
+
+  <!-- Accounts Grid -->
+  <div class="accounts-grid" id="accounts-grid">
+    <!-- Account cards will be injected here -->
+  </div>
+
+  <!-- Empty State -->
+  <div class="empty-state" id="empty-state" style="display: none;">
+    <h3>No accounts added yet</h3>
+    <p>Click "➕ Add Account" to monitor your first bot</p>
+  </div>
+
+  <!-- Log Section -->
+  <div class="log-section">
+    <div class="log-header">
+      <h2>📋 Activity Log</h2>
+      <button class="btn btn-secondary btn-sm" id="btn-clear-log">Clear</button>
+    </div>
+    <div class="log-box" id="global-log">
+      <div class="log-line info">[${new Date().toLocaleTimeString()}] Dashboard initialized</div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    Lumora Bot Dashboard v1.0 | Auto-refresh every 30s | GLD price: $500/GLD
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════════════
+// LUMORA DASHBOARD - Multi-Account Monitor
+// ═══════════════════════════════════════════════════════════════════════
+
+let accounts = [];
+let refreshInterval = null;
+let gldPrice = 500;
+
+// Load from localStorage
+function loadAccounts() {
+  const saved = localStorage.getItem('lumora_accounts');
+  if (saved) {
+    accounts = JSON.parse(saved);
+    renderAccounts();
+    updateSummary();
+  } else {
+    document.getElementById('empty-state').style.display = 'block';
+  }
+}
+
+// Save to localStorage
+function saveAccounts() {
+  localStorage.setItem('lumora_accounts', JSON.stringify(accounts));
+}
+
+// Add account
+function addAccount() {
+  const name = prompt('Account name / username:');
+  if (!name) return;
+  
+  const url = prompt('Tab URL (playlumora.io):', 'https://playlumora.io');
+  if (!url) return;
+  
+  const account = {
+    id: Date.now(),
+    name,
+    url,
+    status: 'stopped',
+    gold: 0,
+    lumi: 0,
+    gld: 0,
+    seeds: 0,
+    plots: 0,
+    passes: 0,
+    actions: 0,
+    goldPerH: '0',
+    actsPerH: '0',
+    gldNet: '0',
+    uptime: '—',
+    lastUpdate: Date.now(),
+    metrics: {},
+    safety: { emergency: false, spendPass: 0, spendHour: 0 },
+  };
+  
+  accounts.push(account);
+  saveAccounts();
+  document.getElementById('empty-state').style.display = 'none';
+  renderAccounts();
+  updateSummary();
+  addLog(`Added account: ${name}`, 'success');
+}
+
+// Remove account
+function removeAccount(id) {
+  if (!confirm('Remove this account?')) return;
+  accounts = accounts.filter(a => a.id !== id);
+  saveAccounts();
+  renderAccounts();
+  updateSummary();
+  if (!accounts.length) {
+    document.getElementById('empty-state').style.display = 'block';
+  }
+}
+
+// Render accounts
+function renderAccounts() {
+  const grid = document.getElementById('accounts-grid');
+  grid.innerHTML = '';
+  
+  accounts.forEach(acc => {
+    const card = document.createElement('div');
+    card.className = 'account-card';
+    card.innerHTML = `
+      <div class="account-header">
+        <div class="account-name">${acc.name}</div>
+        <div class="account-status">
+          <span class="status-dot ${acc.status}"></span>
+          <span>${acc.status}</span>
+        </div>
+      </div>
+      
+      <div class="account-body">
+        <div class="account-stats">
+          <div class="stat-item">
+            <span class="stat-label">Gold</span>
+            <span class="stat-value gold">${acc.gold}◈</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">LUMI</span>
+            <span class="stat-value lumi">${Number(acc.lumi).toFixed(4)}</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">GLD</span>
+            <span class="stat-value gld">${Number(acc.gld).toFixed(8)}</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Seeds</span>
+            <span class="stat-value">${acc.seeds}</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Plots</span>
+            <span class="stat-value">${acc.plots}</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Passes</span>
+            <span class="stat-value">${acc.passes}</span>
+          </div>
+        </div>
+        
+        <div class="account-metrics">
+          <div class="metrics-row">
+            <span class="metrics-label">Uptime</span>
+            <span class="metrics-value">${acc.uptime}</span>
+          </div>
+          <div class="metrics-row">
+            <span class="metrics-label">Gold/hour</span>
+            <span class="metrics-value">${acc.goldPerH}</span>
+          </div>
+          <div class="metrics-row">
+            <span class="metrics-label">Actions/hour</span>
+            <span class="metrics-value">${acc.actsPerH}</span>
+          </div>
+          <div class="metrics-row">
+            <span class="metrics-label">GLD Net</span>
+            <span class="metrics-value">${acc.gldNet}</span>
+          </div>
+          <div class="metrics-row">
+            <span class="metrics-label">Safety</span>
+            <span class="metrics-value">${acc.safety.emergency ? '🚨 EMERGENCY' : '✅ OK'}</span>
+          </div>
+          <div class="metrics-row">
+            <span class="metrics-label">Last update</span>
+            <span class="metrics-value">${formatTimeSince(acc.lastUpdate)}</span>
+          </div>
+        </div>
+        
+        <div class="account-actions">
+          <button class="btn btn-primary btn-sm" onclick="openAccount(${acc.id})">Open Tab</button>
+          <button class="btn btn-secondary btn-sm" onclick="refreshAccount(${acc.id})">Refresh</button>
+          <button class="btn btn-danger btn-sm" onclick="removeAccount(${acc.id})">Remove</button>
+        </div>
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+// Update summary
+function updateSummary() {
+  const totalAccounts = accounts.length;
+  const running = accounts.filter(a => a.status === 'running').length;
+  const totalGld = accounts.reduce((sum, a) => sum + Number(a.gld), 0);
+  const totalActions = accounts.reduce((sum, a) => sum + Number(a.actions), 0);
+  const totalGold = accounts.reduce((sum, a) => sum + Number(a.gold), 0);
+  const totalLumi = accounts.reduce((sum, a) => sum + Number(a.lumi), 0);
+  const totalGldNet = accounts.reduce((sum, a) => sum + parseFloat(a.gldNet), 0);
+  const warnings = accounts.filter(a => a.safety.emergency).length;
+  
+  // Calculate averages
+  const avgActsPerH = running > 0 ? accounts.reduce((sum, a) => sum + parseFloat(a.actsPerH || 0), 0) / running : 0;
+  const avgGoldPerH = running > 0 ? accounts.reduce((sum, a) => sum + parseFloat(a.goldPerH || 0), 0) / running : 0;
+  
+  document.getElementById('total-accounts').textContent = totalAccounts;
+  document.getElementById('running-accounts').textContent = running;
+  document.getElementById('total-gld').textContent = totalGld.toFixed(8);
+  document.getElementById('total-usd').textContent = '$' + (totalGld * gldPrice).toFixed(2);
+  
+  document.getElementById('sum-actions').textContent = totalActions.toLocaleString();
+  document.getElementById('sum-actions-h').textContent = avgActsPerH.toFixed(0) + '/h avg';
+  
+  document.getElementById('sum-gold').textContent = totalGold + '◈';
+  document.getElementById('sum-gold-h').textContent = avgGoldPerH.toFixed(0) + '◈/h';
+  
+  document.getElementById('sum-lumi').textContent = totalLumi.toFixed(4);
+  document.getElementById('sum-lumi-net').textContent = 'Net: ' + totalLumi.toFixed(4);
+  
+  document.getElementById('sum-gld-earned').textContent = totalGldNet.toFixed(8);
+  document.getElementById('sum-gld-usd').textContent = '$' + (totalGldNet * gldPrice).toFixed(2) + ' total';
+  
+  document.getElementById('sum-warnings').textContent = warnings;
+}
+
+// Refresh account (manual - simulated for now)
+function refreshAccount(id) {
+  const acc = accounts.find(a => a.id === id);
+  if (!acc) return;
+  
+  // Simulate data fetch (nanti diganti dengan chrome.tabs.sendMessage kalau jadi extension)
+  acc.lastUpdate = Date.now();
+  
+  // Random simulation (untuk demo)
+  if (acc.status === 'running') {
+    acc.passes += 1;
+    acc.actions += Math.floor(Math.random() * 15) + 10;
+    acc.gold += Math.floor(Math.random() * 50);
+    acc.gld = (Number(acc.gld) + Math.random() * 0.0001).toFixed(8);
+  }
+  
+  saveAccounts();
+  renderAccounts();
+  updateSummary();
+  addLog(`Refreshed: ${acc.name}`, 'info');
+}
+
+// Refresh all
+function refreshAll() {
+  accounts.forEach(acc => refreshAccount(acc.id));
+}
+
+// Start/Stop all
+function startAll() {
+  accounts.forEach(acc => acc.status = 'running');
+  saveAccounts();
+  renderAccounts();
+  updateSummary();
+  addLog('Started all accounts', 'success');
+}
+
+function stopAll() {
+  accounts.forEach(acc => acc.status = 'stopped');
+  saveAccounts();
+  renderAccounts();
+  updateSummary();
+  addLog('Stopped all accounts', 'warning');
+}
+
+// Open account tab
+function openAccount(id) {
+  const acc = accounts.find(a => a.id === id);
+  if (!acc) return;
+  window.open(acc.url, '_blank');
+}
+
+// Add log
+function addLog(msg, type = 'info') {
+  const logBox = document.getElementById('global-log');
+  const line = document.createElement('div');
+  line.className = `log-line ${type}`;
+  line.textContent = `[${new Date().toLocaleTimeString()}] ${msg}`;
+  logBox.insertBefore(line, logBox.firstChild);
+  
+  // Keep last 100 lines
+  while (logBox.children.length > 100) {
+    logBox.removeChild(logBox.lastChild);
+  }
+}
+
+// Clear log
+function clearLog() {
+  document.getElementById('global-log').innerHTML = '';
+  addLog('Log cleared', 'info');
+}
+
+// Format time since
+function formatTimeSince(timestamp) {
+  const seconds = Math.floor((Date.now() - timestamp) / 1000);
+  if (seconds < 60) return seconds + 's ago';
+  const minutes = Math.floor(seconds / 60);
+  if (minutes < 60) return minutes + 'm ago';
+  const hours = Math.floor(minutes / 60);
+  return hours + 'h ago';
+}
+
+// Auto-refresh
+function setupAutoRefresh() {
+  const interval = parseInt(document.getElementById('refresh-interval').value);
+  
+  if (refreshInterval) {
+    clearInterval(refreshInterval);
+    refreshInterval = null;
+  }
+  
+  if (interval > 0) {
+    refreshInterval = setInterval(refreshAll, interval);
+    addLog(`Auto-refresh: every ${interval/1000}s`, 'info');
+  } else {
+    addLog('Auto-refresh: disabled', 'info');
+  }
+}
+
+// GLD price change
+function updateGldPrice() {
+  gldPrice = parseFloat(document.getElementById('gld-price').value) || 500;
+  updateSummary();
+}
+
+// Event listeners
+document.getElementById('btn-add-account').addEventListener('click', addAccount);
+document.getElementById('btn-refresh-all').addEventListener('click', refreshAll);
+document.getElementById('btn-start-all').addEventListener('click', startAll);
+document.getElementById('btn-stop-all').addEventListener('click', stopAll);
+document.getElementById('btn-clear-log').addEventListener('click', clearLog);
+document.getElementById('refresh-interval').addEventListener('change', setupAutoRefresh);
+document.getElementById('gld-price').addEventListener('change', updateGldPrice);
+
+// Init
+loadAccounts();
+setupAutoRefresh();
+</script>
+
+</body>
+</html>
